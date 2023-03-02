@@ -1,0 +1,7 @@
+首先需要注意的是 operator-sdk 与 golang 版本是由关系的
+operator-sdk 1.24 版本接受 go v1.18 
+
+$ operator-sdk init --plugins go/v3 --domain hubert.test --owner "hubert" --repo github.com/hubert-he/scaler-operator
+
+$ operator-sdk create api --kind Scaler --group api --version v1alpha1
+

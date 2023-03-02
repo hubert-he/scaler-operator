@@ -1,0 +1,6 @@
+apiVersion: api.hubert.test/v1alpha1
+kind: Scaler
+metadata:
+  name: scaler-sample
+spec:
+  # TODO(user): Add fields here
