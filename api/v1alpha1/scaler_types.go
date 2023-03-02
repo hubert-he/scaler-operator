@@ -28,8 +28,15 @@ type ScalerSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of Scaler. Edit scaler_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	Start       int              `json:"start"`
+	End         int              `json:"end"`
+	Replicas    int              `json:"replicas"`
+	Deployments []NamespacedName `json:"deployments"`
+}
+
+type NamespacedName struct {
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
 }
 
 // ScalerStatus defines the observed state of Scaler
@@ -42,10 +49,11 @@ type ScalerStatus struct {
 //+kubebuilder:subresource:status
 
 // Scaler is the Schema for the scalers API
+// config/sample/api_v1alpha1_scaler.yaml
 type Scaler struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
-
+	metav1.TypeMeta   `json:",inline"`            // 定义了 crd 中的 apiVersion 和 Kind
+	metav1.ObjectMeta `json:"metadata,omitempty"` // 定义了crd 中的metadata
+	// 上面2个全是固定的，下面是自定义的
 	Spec   ScalerSpec   `json:"spec,omitempty"`
 	Status ScalerStatus `json:"status,omitempty"`
 }
