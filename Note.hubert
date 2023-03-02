@@ -5,3 +5,13 @@ $ operator-sdk init --plugins go/v3 --domain hubert.test --owner "hubert" --repo
 
 $ operator-sdk create api --kind Scaler --group api --version v1alpha1
 
+hubert@dev:~/scaler-operator$ make manifests
+/home/hubert/scaler-operator/bin/controller-gen rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+hubert@dev:~/scaler-operator$ git status
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	config/crd/bases/
+	config/rbac/role.yaml
+
+
