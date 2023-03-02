@@ -33,7 +33,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: 上面2个全是固定的，下面是自定义的
+            description: '上面2个全是固定的，下面是自定义的'
             properties:
               deployments:
                 items:

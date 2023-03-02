@@ -18,14 +18,18 @@ package controllers
 
 import (
 	"context"
+	"fmt"
+	"time"
 
+	apiv1alpha1 "github.com/hubert-he/scaler-operator/api/v1alpha1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
-
-	apiv1alpha1 "github.com/hubert-he/scaler-operator/api/v1alpha1"
 )
+
+var logger = log.Log.WithName("scaler-controller")
 
 // ScalerReconciler reconciles a Scaler object
 type ScalerReconciler struct {
@@ -50,8 +54,31 @@ func (r *ScalerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	_ = log.FromContext(ctx)
 
 	// TODO(user): your logic here
+	log := logger.WithValues("Request.Namespace", req.Namespace, "Request.Name", req.Name)
+	log.Info("Reconcile called")
+	scaler := &apiv1alpha1.Scaler{}
+	err := r.Get(ctx, req.NamespacedName, scaler)
+	if err != nil {
+		if apierrors.IsNotFound(err) {
+			log.Info("Scaler resource not found. Ignoring since object must be deleted.")
+			return ctrl.Result{}, nil
+		}
+		log.Error(err, "Failed")
+		return ctrl.Result{}, err
+	}
+	startTime, endTime := scaler.Spec.Start, scaler.Spec.End
+	currentHour := time.Now().UTC().Hour()
+	log.Info(fmt.Sprintf("current time in hour : %d\n", currentHour))
+	if currentHour >= startTime && currentHour <= endTime {
+		// 正式开始处理
+		log.Info("scale up again")
+		scaleDeployment(ctx, scaler)
+	}
+	return ctrl.Result{RequeueAfter: time.Duration(30 * time.Second)}, nil
+}
 
-	return ctrl.Result{}, nil
+func scaleDeployment(ctx context.Context, scaler *apiv1alpha1.Scaler, r *ScalerReconciler, replicas int32) error {
+	return nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
