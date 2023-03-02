@@ -72,7 +72,7 @@ func (r *ScalerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	if currentHour >= startTime && currentHour <= endTime {
 		// 正式开始处理
 		log.Info("scale up again")
-		scaleDeployment(ctx, scaler)
+		scaleDeployment(ctx, scaler, r, int32(scaler.Spec.Replicas))
 	}
 	return ctrl.Result{RequeueAfter: time.Duration(30 * time.Second)}, nil
 }
