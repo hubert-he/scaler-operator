@@ -75,6 +75,8 @@ func (r *ScalerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		// 正式开始处理
 		log.Info("scale up again")
 		scaleDeployment(ctx, scaler, r, int32(scaler.Spec.Replicas))
+	} else { // scale down to 2
+		scaleDeployment(ctx, scaler, r, 2)
 	}
 	return ctrl.Result{RequeueAfter: time.Duration(30 * time.Second)}, nil
 }
