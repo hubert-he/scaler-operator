@@ -20,6 +20,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// 增加状态常量定义
+const (
+	SUCCESS = "Success"
+	FAILED  = "Failed"
+)
+
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
@@ -43,6 +49,8 @@ type NamespacedName struct {
 type ScalerStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+	// 增加状态定义
+	Status string `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true

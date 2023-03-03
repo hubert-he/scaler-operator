@@ -15,3 +15,16 @@ Untracked files:
 	config/rbac/role.yaml
 
 
+
+$ kubectl apply -f config/crd/bases/api.hubert.test.scalers.yaml
+
+
+在程序中执行 make run 来运行此 operator程序
+
+启动的时候 遇到一个8080端口问题
+这是因为 operator 自带 metric server，为prometheus提供状态监控支持
+可以修改默认端口
+
+在 makefile中 run 命令下修改
+go run ./main.go --metrics-bind-address=:8383
+

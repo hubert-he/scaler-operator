@@ -19,6 +19,8 @@ package controllers
 import (
 	"context"
 	"fmt"
+	v1 "k8s.io/api/apps/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"time"
 
 	apiv1alpha1 "github.com/hubert-he/scaler-operator/api/v1alpha1"
@@ -78,6 +80,29 @@ func (r *ScalerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 }
 
 func scaleDeployment(ctx context.Context, scaler *apiv1alpha1.Scaler, r *ScalerReconciler, replicas int32) error {
+	for _, deploy := range scaler.Spec.Deployments {
+		dep := &v1.Deployment{}
+		err := r.Get(ctx, types.NamespacedName{
+			Namespace: deploy.Namespace,
+			Name:      deploy.Name,
+		}, dep)
+		if err != nil {
+			return err
+		}
+		if dep.Spec.Replicas != &replicas {
+			dep.Spec.Replicas = &replicas // 这句是真正的执行语句
+			err := r.Update(ctx, dep)
+			if err != nil {
+				scaler.Status.Status = apiv1alpha1.FAILED
+				return err
+			}
+			scaler.Status.Status = apiv1alpha1.SUCCESS
+			err = r.Status().Update(ctx, scaler)
+			if err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }
 
